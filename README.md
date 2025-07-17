@@ -1,6 +1,3 @@
-## CraftTell
-
-This is the **frontend** of the Crafttell project – a web application that allows users to create AI-generated avatars with customizable images, voices, and tones.
 
 ## **Project Name:** CraftTell
 
