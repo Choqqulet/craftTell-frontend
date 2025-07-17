@@ -1,17 +1,22 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getStorage } from "firebase/storage";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyBraf4BoyQ7e31UXrUGDqoOfmUn2kB1LX4",
+  authDomain: "crafttell-7ca96.firebaseapp.com",
+  databaseURL: "https://crafttell-7ca96-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "crafttell-7ca96",
+  storageBucket: "crafttell-7ca96.appspot.com",
+  messagingSenderId: "455556265744",
+  appId: "1:455556265744:web:76d91f51854ede5ad4d795",
+  measurementId: "G-XEZWJH4GFP"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const provider = new GoogleAuthProvider();
 
-export { auth, provider };
+// Services
+const storage = getStorage(app);
+const db = getFirestore(app);
+
+export { storage, db };
