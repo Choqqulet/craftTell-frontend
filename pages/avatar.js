@@ -8,6 +8,7 @@ export default function AvatarPage() {
   const [audioUrl, setAudioUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState(null); // ✅ move it HERE
 
   // Upload avatar image to Firebase Storage
   const uploadAvatar = async (file) => {
@@ -17,7 +18,6 @@ export default function AvatarPage() {
     return url;
   };
 
-  // Save avatar metadata to Firestore
   const saveAvatarMetadata = async ({ name, imageUrl, voiceType, tone }) => {
     try {
       const docRef = await addDoc(collection(db, "avatars"), {
@@ -37,17 +37,14 @@ export default function AvatarPage() {
     }
   };
 
-  // Generate voice using VoiceRSS
   const handleGenerateVoice = async () => {
     setIsLoading(true);
     try {
       const response = await fetch("https://api.voicerss.org/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
-          key: "YOUR_API_KEY", // Replace this with real VoiceRSS key
+          key: "YOUR_API_KEY",
           hl: "en-us",
           src: previewText,
           c: "MP3",
@@ -65,10 +62,26 @@ export default function AvatarPage() {
     setIsLoading(false);
   };
 
-  // Upload both avatar and metadata
   const handleUploadAll = async () => {
     if (!file) return alert("Please upload an image first.");
-    const imageUrl = await uploadAvatar(file);
+
+    const formData = new FormData();
+    formData.append("image", file);
+
+    const res = await fetch("http://localhost:5050/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    const data = await res.json();
+    if (!data.imageUrl) {
+      alert("Upload failed");
+      return;
+    }
+
+    const imageUrl = data.imageUrl;
+    setUploadedImageUrl(imageUrl); // ✅ set state correctly
+
     await saveAvatarMetadata({
       name: "XaviChan",
       imageUrl,
@@ -81,10 +94,20 @@ export default function AvatarPage() {
     <div style={{ padding: "2rem", maxWidth: "600px", margin: "auto" }}>
       <h2>Avatar Upload & Voice Preview</h2>
 
-      {/* Upload image */}
       <input type="file" onChange={(e) => setFile(e.target.files[0])} />
 
-      {/* Preview Text input */}
+      {/* ✅ Image Preview */}
+      {uploadedImageUrl && (
+        <div style={{ marginTop: "1rem" }}>
+          <h4>Uploaded Avatar Preview</h4>
+          <img
+            src={uploadedImageUrl}
+            alt="Uploaded Avatar"
+            style={{ width: "150px", borderRadius: "8px" }}
+          />
+        </div>
+      )}
+
       <div style={{ marginTop: "2rem" }}>
         <h3>Preview Text</h3>
         <input
